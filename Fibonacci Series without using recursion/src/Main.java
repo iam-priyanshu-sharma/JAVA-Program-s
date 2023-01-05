@@ -1,4 +1,4 @@
-class Fibonacci{
+/*class Fibonacci{
     public static void main(String[] arg)
     {
         int n1=0,n2=1,n3,i,count=10;
@@ -13,4 +13,20 @@ class Fibonacci{
         }
 
     }
+}*/
+class Fibonacci {
+  public static void main(String[] args) {
+
+    int n = 10, firstTerm = 0, secondTerm = 1;
+    System.out.println("Fibonacci Series till " + n + " terms:");
+
+    for (int i = 1; i <= n; ++i) {
+      System.out.print(firstTerm + ", ");
+
+      // compute the next term
+      int nextTerm = firstTerm + secondTerm;
+      firstTerm = secondTerm;
+      secondTerm = nextTerm;
+    }
+  }
 }
