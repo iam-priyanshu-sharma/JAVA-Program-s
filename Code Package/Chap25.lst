@@ -1,0 +1,422 @@
+listing 1
+// Demonstrate several mouse event handlers.
+import java.awt.*; 
+import java.awt.event.*; 
+
+public class MouseEventsDemo extends Frame
+  implements MouseListener, MouseMotionListener { 
+ 
+  String msg = ""; 
+  int mouseX = 0, mouseY = 0; // coordinates of mouse 
+ 
+  public MouseEventsDemo() { 
+     addMouseListener(this); 
+     addMouseMotionListener(this); 
+     addWindowListener(new MyWindowAdapter());
+  } 
+
+  // Handle mouse clicked. 
+  public void mouseClicked(MouseEvent me) { 
+    msg = msg + " -- click received"; 
+    repaint(); 
+  } 
+ 
+  // Handle mouse entered. 
+  public void mouseEntered(MouseEvent me) { 
+    mouseX = 100; 
+    mouseY = 100; 
+    msg = "Mouse entered."; 
+    repaint(); 
+  } 
+ 
+  // Handle mouse exited. 
+  public void mouseExited(MouseEvent me) { 
+    mouseX = 100; 
+    mouseY = 100; 
+    msg = "Mouse exited."; 
+    repaint(); 
+  } 
+ 
+  // Handle button pressed. 
+  public void mousePressed(MouseEvent me) { 
+    // save coordinates 
+    mouseX = me.getX(); 
+    mouseY = me.getY(); 
+    msg = "Button down"; 
+    repaint(); 
+  } 
+ 
+  // Handle button released. 
+  public void mouseReleased(MouseEvent me) { 
+    // save coordinates 
+    mouseX = me.getX(); 
+    mouseY = me.getY(); 
+    msg = "Button Released"; 
+    repaint(); 
+  } 
+ 
+  // Handle mouse dragged. 
+  public void mouseDragged(MouseEvent me) { 
+    // save coordinates 
+    mouseX = me.getX(); 
+    mouseY = me.getY(); 
+    msg = "*" + " mouse at " + mouseX + ", " + mouseY; 
+    repaint(); 
+  } 
+ 
+  // Handle mouse moved. 
+  public void mouseMoved(MouseEvent me) { 
+    msg = "Moving mouse at " + me.getX() + ", " + me.getY(); 
+    repaint();
+  } 
+ 
+  // Display msg in the window at current X,Y location. 
+  public void paint(Graphics g) { 
+    g.drawString(msg, mouseX, mouseY); 
+  } 
+
+  public static void main(String[] args) {
+    MouseEventsDemo appwin = new MouseEventsDemo();
+
+    appwin.setSize(new Dimension(300, 300));
+    appwin.setTitle("MouseEventDemo");
+    appwin.setVisible(true);
+  }
+}
+
+// When the close box in the frame is clicked,
+// close the window and exit the program.
+class MyWindowAdapter extends WindowAdapter {
+  public void windowClosing(WindowEvent we) {
+    System.exit(0);
+  }
+}
+
+
+listing 2
+// Demonstrate the key event handlers.
+import java.awt.*;
+import java.awt.event.*;
+
+public class SimpleKey extends Frame
+  implements KeyListener {
+
+  String msg = "";
+  String keyState = "";
+
+  public SimpleKey() {
+    addKeyListener(this);
+    addWindowListener(new MyWindowAdapter());
+  }
+
+  // Handle a key press.
+  public void keyPressed(KeyEvent ke) {
+    keyState = "Key Down";
+    repaint();
+  }
+
+  // Handle a key release.
+  public void keyReleased(KeyEvent ke) {
+    keyState = "Key Up";
+    repaint();
+  }
+
+  // Handle key typed.
+  public void keyTyped(KeyEvent ke) {
+    msg += ke.getKeyChar();
+    repaint();
+  }
+
+  // Display keystrokes.
+  public void paint(Graphics g) {
+    g.drawString(msg, 20, 100);
+    g.drawString(keyState, 20, 50);
+  }    
+
+  public static void main(String[] args) {
+    SimpleKey appwin = new SimpleKey();
+
+    appwin.setSize(new Dimension(200, 150));
+    appwin.setTitle("SimpleKey");
+    appwin.setVisible(true);
+  }
+}
+
+// When the close box in the frame is clicked,
+// close the window and exit the program.
+class MyWindowAdapter extends WindowAdapter {
+  public void windowClosing(WindowEvent we) {
+    System.exit(0);
+  }
+}
+
+
+listing 3
+// Demonstrate some virutal key codes.
+import java.awt.*;
+import java.awt.event.*;
+
+public class KeyEventsDemo extends Frame
+  implements KeyListener {
+
+  String msg = "";
+  String keyState = "";
+
+  public KeyEventsDemo() {
+    addKeyListener(this);
+    addWindowListener(new MyWindowAdapter());
+  }
+
+  // Handle a key press.  
+  public void keyPressed(KeyEvent ke) {
+    keyState = "Key Down";
+
+    int key = ke.getKeyCode(); 
+    switch(key) {
+      case KeyEvent.VK_F1:
+        msg += "<F1>";
+        break;
+      case KeyEvent.VK_F2:
+        msg += "<F2>";
+        break;
+      case KeyEvent.VK_F3:
+        msg += "<F3>";
+        break;
+      case KeyEvent.VK_PAGE_DOWN:
+        msg += "<PgDn>";
+        break;
+      case KeyEvent.VK_PAGE_UP:
+        msg += "<PgUp>";
+        break;
+      case KeyEvent.VK_LEFT:
+        msg += "<Left Arrow>";
+        break;
+      case KeyEvent.VK_RIGHT:
+        msg += "<Right Arrow>";
+        break;
+    }
+
+    repaint();
+  }
+
+  // Handle a key release.
+  public void keyReleased(KeyEvent ke) {
+    keyState = "Key Up";
+    repaint();
+  }
+
+  // Handle key typed.
+  public void keyTyped(KeyEvent ke) {
+    msg += ke.getKeyChar();
+    repaint();
+  }
+
+  // Display keystrokes.
+  public void paint(Graphics g) {
+    g.drawString(msg, 20, 100);
+    g.drawString(keyState, 20, 50);
+  }    
+
+  public static void main(String[] args) {
+    KeyEventsDemo appwin = new KeyEventsDemo();
+
+    appwin.setSize(new Dimension(200, 150));
+    appwin.setTitle("KeyEventsDemo");
+    appwin.setVisible(true);
+  }
+}
+
+// When the close box in the frame is clicked,
+// close the window and exit the program.
+class MyWindowAdapter extends WindowAdapter {
+  public void windowClosing(WindowEvent we) {
+    System.exit(0);
+  }
+}
+
+listing 4
+// Demonstrate adaptor classes.
+import java.awt.*;
+import java.awt.event.*;
+
+public class AdapterDemo extends Frame {
+  String msg = "";
+
+  public AdapterDemo() {
+     addMouseListener(new MyMouseAdapter(this));
+     addMouseMotionListener(new MyMouseAdapter(this));
+     addWindowListener(new MyWindowAdapter());
+  }
+
+  // Display the mouse information.
+  public void paint(Graphics g) {
+    g.drawString(msg, 20, 80);
+  }    
+
+  public static void main(String[] args) {
+    AdapterDemo appwin = new AdapterDemo();
+
+    appwin.setSize(new Dimension(200, 150));
+    appwin.setTitle("AdapterDemo");
+    appwin.setVisible(true);
+  }
+}
+
+// Handle only mouse click and drag events. 
+class MyMouseAdapter extends MouseAdapter {
+  AdapterDemo adapterDemo;
+
+  public MyMouseAdapter(AdapterDemo adapterDemo) {
+    this.adapterDemo = adapterDemo;
+  }
+
+  // Handle mouse clicked.
+  public void mouseClicked(MouseEvent me) {
+    adapterDemo.msg = "Mouse clicked";
+    adapterDemo.repaint();
+  }
+
+  // Handle mouse dragged.
+  public void mouseDragged(MouseEvent me) {
+    adapterDemo.msg = "Mouse dragged";
+    adapterDemo.repaint();
+  } 
+}
+
+// When the close box in the frame is clicked,
+// close the window and exit the program.
+class MyWindowAdapter extends WindowAdapter {
+  public void windowClosing(WindowEvent we) {
+    System.exit(0);
+  }
+}
+
+listing 5
+// This program does NOT use an inner class.
+import java.awt.*;
+import java.awt.event.*;
+ 
+public class MousePressedDemo extends Frame {
+  String msg = "";
+
+  public MousePressedDemo() {
+    addMouseListener(new MyMouseAdapter(this));
+    addWindowListener(new MyWindowAdapter());
+  }
+
+  public void paint(Graphics g) {
+    g.drawString(msg, 20, 100);
+  }    
+
+  public static void main(String[] args) {
+    MousePressedDemo appwin = new MousePressedDemo();
+
+    appwin.setSize(new Dimension(200, 150));
+    appwin.setTitle("MousePressedDemo");
+    appwin.setVisible(true);
+  }
+}
+
+class MyMouseAdapter extends MouseAdapter {
+  MousePressedDemo mousePressedDemo;
+
+  public MyMouseAdapter(MousePressedDemo mousePressedDemo) {
+    this.mousePressedDemo = mousePressedDemo;
+  }
+
+  // Handle a mouse pressed.
+  public void mousePressed(MouseEvent me) {
+    mousePressedDemo.msg = "Mouse Pressed.";
+    mousePressedDemo.repaint();
+  }
+}
+
+// When the close box in the frame is clicked,
+// close the window and exit the program.
+class MyWindowAdapter extends WindowAdapter {
+  public void windowClosing(WindowEvent we) {
+    System.exit(0);
+  }
+}
+
+listing 6
+// Inner class demo.
+import java.awt.*;
+import java.awt.event.*;
+ 
+public class InnerClassDemo extends Frame {
+  String msg = "";
+
+  public InnerClassDemo() {
+    addMouseListener(new MyMouseAdapter());
+    addWindowListener(new MyWindowAdapter());
+  }
+
+  // Inner class to handle mouse pressed events.
+  class MyMouseAdapter extends MouseAdapter {
+    public void mousePressed(MouseEvent me) {
+      msg = "Mouse Pressed.";
+      repaint();
+    }
+  }
+
+  // Inner class to handle window close events.
+  class MyWindowAdapter extends WindowAdapter {
+    public void windowClosing(WindowEvent we) {
+      System.exit(0);
+    }
+  }
+
+  public void paint(Graphics g) {
+    g.drawString(msg, 20, 80);
+  }    
+
+  public static void main(String[] args) {
+    InnerClassDemo appwin = new InnerClassDemo();
+
+    appwin.setSize(new Dimension(200, 150));
+    appwin.setTitle("InnerClassDemo");
+    appwin.setVisible(true);
+  }
+}
+
+listing 7
+// Anonymous Inner class demo.
+import java.awt.*;
+import java.awt.event.*;
+ 
+public class AnonymousInnerClassDemo extends Frame {
+  String msg = "";
+
+  public AnonymousInnerClassDemo() {
+
+    // Anonymous inner class to handle mouse pressed events.
+    addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent me) {
+        msg = "Mouse Pressed.";
+        repaint();
+      }
+    });
+
+
+    // Anonymous inner class to handle window close events.
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+  }
+
+  public void paint(Graphics g) {
+    g.drawString(msg, 20, 80);
+  }    
+
+  public static void main(String[] args) {
+    AnonymousInnerClassDemo appwin =
+                  new AnonymousInnerClassDemo();
+
+    appwin.setSize(new Dimension(200, 150));
+    appwin.setTitle("AnonymousInnerClassDemo");
+    appwin.setVisible(true);
+  }
+}
