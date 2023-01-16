@@ -1,0 +1,422 @@
+listing 1
+// Use a traditional switch to set a priority level based on which
+// event code is matched. 
+class TraditionalSwitch { 
+ 
+  public static void main(String[] args) { 
+    int priorityLevel;
+ 
+    int eventCode = 6010;
+
+    // A traditional switch that supplies a value associated
+    // with a case.
+    switch(eventCode) {
+      case 1000: // In this traditional switch, case stacking is used.
+      case 1205:
+      case 8900:
+        priorityLevel = 1;
+        break;
+      case 2000:
+      case 6010:
+      case 9128:
+        priorityLevel = 2;
+        break;
+      case 1002:
+      case 7023:
+      case 9300:
+        priorityLevel = 3;
+        break;
+      default: // normal priority
+        priorityLevel = 0; 
+    }
+
+    System.out.println("Priority level for event code " + eventCode +
+                       " is " + priorityLevel);
+  }
+}
+
+listing 2
+// This switch uses a list of constants with each case.
+switch(eventCode) {
+  case 1000, 1205, 8900: 
+    priorityLevel = 1;
+    break;
+  case 2000, 6010, 9128:
+    priorityLevel = 2;
+    break;
+  case 1002, 7023, 9300:
+    priorityLevel = 3;
+    break;
+  default: // normal priority
+    priorityLevel = 0; 
+}
+
+listing 3
+// Convert a switch statement into a switch expression. 
+class SwitchExpr { 
+ 
+  public static void main(String[] args) { 
+    int eventCode = 6010;
+
+    // This is a switch expression. Notice how its value is assigned
+    // to the priorityLevel variable. Also notice how the value of the
+    // switch is supplied by the yield statement.
+    int priorityLevel = switch(eventCode) {
+      case 1000, 1205, 8900: 
+        yield 1; 
+      case 2000, 6010, 9128:
+        yield 2;
+      case 1002, 7023, 9300:
+        yield 3;
+      default: // normal priority
+        yield 0; 
+    };
+
+    System.out.println("Priority level for event code " + eventCode +
+                       " is " + priorityLevel);
+  }
+}
+
+listing 4
+// Use the arrow "shorthand" to supply the priority level.
+class SwitchExpr2 { 
+ 
+  public static void main(String[] args) { 
+     int eventCode = 6010;
+
+    // In this switch expression, notice how the value is supplied
+    // by use of an arrow case. Notice that no break statement is
+    // required (or allowed) to prevent fall through.
+    int priorityLevel = switch(eventCode) {
+      case 1000, 1205, 8900 -> 1;  
+      case 2000, 6010, 9128 -> 2;
+      case 1002, 7023, 9300 -> 3;
+      default -> 0; // normal priority
+    };
+
+    System.out.println("Priority level for event code " + eventCode +
+                       " is " + priorityLevel);
+  }
+}
+
+listing 5
+// Use blocks with an arrow. 
+class BlockArrowCase { 
+ 
+  public static void main(String[] args) { 
+    boolean stopNow;
+
+    int eventCode = 9300;
+
+    // Use code blocks with an arrow.  Again, notice
+    // that no break statement is required (or allowed)
+    // to prevent fall through. Because the target of an
+    // arrow is a block, yield must be used to supply a value.
+    int priorityLevel = switch(eventCode) {
+      case 1000, 1205, 8900 -> { // use a block with an arrow
+             stopNow = false;
+             System.out.println("Alert");
+             yield 1;
+           }
+      case 2000, 6010, 9128 -> {
+             stopNow = false;
+             System.out.println("Warning");               
+             yield 2;
+           }
+      case 1002, 7023, 9300 -> {
+             stopNow = true;
+             System.out.println("Danger");               
+             yield 3;
+           }
+      default ->  { 
+             stopNow = false; 
+             System.out.println("Normal.");
+             yield 0;
+          }
+    };
+
+    System.out.println("Priority level for event code " + eventCode +
+                       " is " + priorityLevel);    
+    if(stopNow) System.out.println("Stop required.");
+  }
+}
+
+listing 6
+// Use case arrows with a switch statement
+class StatementSwitchWithArrows { 
+ 
+  public static void main(String[] args) { 
+    int up = 0;
+    int down = 0;
+    int left = 0;
+    int right = 0;
+
+    char direction = 'R';
+
+    // Use arrows with a switch statement.  Notice that
+    // no value is produced.
+    switch(direction) {
+      case 'L' ->  {
+                      System.out.println("Turning Left");
+                      left++;
+                   }
+      case 'R' -> {
+                     System.out.println("Turning Right");
+                     right++;
+                  }
+      case 'U' -> {
+                     System.out.println("Moving Up");
+                     up++;
+                  }
+      case 'D' -> {
+                     System.out.println("Moving Down");
+                     down++;
+                  }
+    }
+
+    System.out.println(right);
+  }
+}
+
+listing 7
+// Use a switch expression to determine if a character is an English vowel.
+// Notice the use of a block as the target of an arrow case for Y.
+ 
+class Vowels { 
+ 
+  public static void main(String[] args) { 
+
+    // If Y is to be counted as a vowel, set this
+    // variable to true.
+    boolean yIsVowel = true; 
+
+    char ch = 'Y';
+
+    boolean isVowel = switch(ch) {
+      case 'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U' -> true;
+      case 'y', 'Y' -> { if(yIsVowel) yield true; else yield false; }
+      default -> false;
+    };
+
+    if(isVowel) System.out.println(ch + " is a vowel.");
+  }
+}
+
+listing 8
+// Demonstrate indentation in a text block.
+ 
+class TextBlockDemo { 
+ 
+  public static void main(String[] args) { 
+    String str = """
+                 Text blocks support strings that
+                 span two or more lines and preserve
+                     indentation. They reduce the
+                         tedium associated with the
+                      entry of long or complicated
+                 strings into a program.
+                 """; 
+
+    System.out.println(str);
+  }
+}
+
+listing 9
+// Use double quotes in a text block.
+ 
+class TextBlockDemo2 { 
+ 
+  public static void main(String[] args) { 
+
+    String str = """
+                 A text block can use double quotes without
+                 the need for escape sequences. For example:
+
+                 He said, "The cat is on the roof."
+                 She asked, "How did it get up there?"
+                 """; 
+
+    System.out.println(str);
+  }
+}
+
+listing 10
+// A simple Record example.
+
+// Declare an employee record. This automatically creates a
+// record class with private, final fields called name and idNum,
+// and with read-only accessors called name() and idNum().
+record Employee(String name, int idNum) {}
+
+class RecordDemo { 
+  public static void main(String[] args) { 
+    // Create an array of Employee records.
+    Employee[] empList = new Employee[4];
+
+    // Create a list of employees that uses the Employee record.
+    // Notice how each record is constructed. The arguments
+    // are automatically assigned to the name and idNum fields in
+    // record that is being created.
+    empList[0] = new Employee("Doe, John", 1047);
+    empList[1] = new Employee("Jones, Robert", 1048);
+    empList[2] = new Employee("Smith, Rachel", 1049);
+    empList[3] = new Employee("Martin, Dave", 1050);
+
+    // Use the record accessors to display names and IDs.
+    for(Employee e: empList) 
+      System.out.println("The employee ID for " + e.name() + " is " + e.idNum());
+  }
+}
+
+listing 11
+// Use a compact record constructor.
+
+// Declare an employee record. 
+record Employee(String name, int idNum) {
+
+  // Use a compact canonical constructor to remove any leading and
+  // trailing spaces from the name string.
+  public Employee {
+    // Remove any leading and trailing spaces.
+    name = name.trim();
+  }
+}
+
+class RecordDemo2 { 
+  public static void main(String[] args) { 
+    Employee[] empList = new Employee[4];
+
+    // Here, the name has no leading or trailing spaces.
+    empList[0] = new Employee("Doe, John", 1047);
+
+    // The next three names have leading and/or trailing spaces.
+    empList[1] = new Employee("  Jones, Robert", 1048);
+    empList[2] = new Employee("Smith, Rachel  ", 1049);
+    empList[3] = new Employee("  Martin, Dave  ", 1050);
+
+    // Use the record accessors to display names and IDs.
+    // Notice that all leading and/or trailing spaces have been
+    // removed from the name component by the constructor.
+    for(Employee e: empList) 
+      System.out.println("The employee ID for " + e.name() + " is " + e.idNum());
+  }
+}
+
+listing 12
+// Use a non-canonical constructor in a record.
+
+// Declare an employee record that explicitly declares both
+// a canonical and non-canonical constructor. 
+record Employee(String name, int idNum) {
+
+  // Use a static field in a record.
+  static int pendingID = -1;
+
+  // Use a compact canonical constructor to remove any leading and
+  // trailing spaces from the name string.
+  public Employee {
+    // Remove any leading and trailing spaces.
+    name = name.trim();
+  }
+
+  // This is a non-canonical constructor. Notice that it is
+  // not passed an ID number. Instead, it passes pendingID to the
+  // canonical constructor to create the record.
+  public Employee(String name) {
+    this(name, pendingID); 
+  }
+}
+
+class RecordDemo3 { 
+  public static void main(String[] args) { 
+    Employee[] empList = new Employee[4];
+
+    // Create a list of employees that uses the Employee record.
+    empList[0] = new Employee("Doe, John", 1047);
+    empList[1] = new Employee("Jones, Robert", 1048);
+    empList[2] = new Employee("Smith, Rachel", 1049);
+
+    // Here, the ID number is pending.
+    empList[3] = new Employee("Martin, Dave");
+
+    // Display names and IDs.
+    for(Employee e: empList) {
+      System.out.print("The employee ID for " + e.name() + " is ");
+      if(e.idNum() == Employee.pendingID) System.out.println("Pending");
+      else System.out.println(e.idNum());
+    }
+  }
+}
+
+listing 13
+public Employee {
+  // Remove any leading and trailing spaces.
+  name = name.trim();
+
+  // Perform a minimalist check that name follows the
+  // lastname, firstname format.
+  //
+  // First, confirm that name contains only one comma.
+  int i = name.indexOf(','); // look for comma separating names.
+  int j = name.lastIndexOf(',');
+  if(i != j) throw
+    new IllegalArgumentException("Multiple commas found.");
+
+  // Next, confirm that a comma is present after
+  // at least one leading character, and that at least one
+  // character follows the comma.
+  if(i < 1 | name.length() == i+1) throw 
+    new IllegalArgumentException("Required format: last, first");
+}
+
+listing 14
+// Use an instance method in a record.
+
+// This version of Employee provides a method called lastLastName()
+// that returns only the last name of the name component.
+// It also includes the version of the compact constructor that 
+// checks for the conventional lastname, firstname format.
+record Employee(String name, int idNum) {
+
+  // Use a compact canonical constructor to remove any leading
+  // and trailing spaces in the name component. Also perform
+  // a basic check that the required format of lastname, firstname.
+  // is passed to the name parameter.
+  public Employee {
+    // Remove any leading and trailing spaces.
+    name = name.trim();
+
+    // Perform a minimalist check that name follows the
+    // lastname, firstname format.
+    //
+    // First, confirm that name contains only one comma.
+    int i = name.indexOf(','); // look for comma separating names.
+    int j = name.lastIndexOf(',');
+    if(i != j) throw
+      new IllegalArgumentException("Multiple commas found.");
+
+    // Next, confirm that a comma is present after
+    // at least one leading character, and that at least one
+    // character follows the comma.
+    if(i < 1 | name.length() == i+1) throw 
+      new IllegalArgumentException("Required format: last, first");
+  }
+
+  // An instance method that returns only the last name
+  // without the first name.
+  String lastName() {
+    return name.substring(0, name.trim().indexOf(','));
+  }
+}
+
+class RecordDemo4 { 
+  public static void main(String[] args) { 
+    Employee emp = new Employee("Jones, Robert", 1048);
+
+    // Display the name component unmodified.
+    System.out.println("Employee full name is " + emp.name());
+
+    // Display only last name.
+    System.out.println("Employee last name is " +  emp.lastName()); 
+  }
+}

@@ -1,0 +1,707 @@
+listing 1
+// Load and display an image.
+import java.awt.*;
+import java.awt.event.*;
+import javax.imageio.*;
+import java.io.*;
+
+public class SimpleImageLoad extends Frame {
+  Image img;
+
+  public SimpleImageLoad() {
+
+    try {
+      File imageFile = new File("Lilies.jpg");
+
+      // Load the image.
+      img = ImageIO.read(imageFile);
+    } catch (IOException exc) {
+      System.out.println("Cannot load image file.");
+      System.exit(0);
+    }
+ 
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+  }
+
+  public void paint(Graphics g) {
+    g.drawImage(img, getInsets().left, getInsets().top, null);
+  }
+
+  public static void main(String[] args) {
+    SimpleImageLoad appwin = new SimpleImageLoad();
+
+    appwin.setSize(new Dimension(400, 365));
+    appwin.setTitle("SimpleImageLoad");
+    appwin.setVisible(true);
+  } 
+}
+
+
+listing 2
+// Demonstrate the use of an off-screen buffer.
+import java.awt.*;
+import java.awt.event.*;
+
+public class DoubleBuffer extends Frame {
+  int gap = 3;
+  int mx, my;
+  boolean flicker = true;
+  Image buffer = null;
+  int w = 400, h = 400;
+
+  public DoubleBuffer() {
+    addMouseMotionListener(new MouseMotionAdapter() {
+      public void mouseDragged(MouseEvent me) {
+        mx = me.getX();
+        my = me.getY();
+        flicker = false;
+        repaint();
+      }
+      public void mouseMoved(MouseEvent me) {
+        mx = me.getX();
+        my = me.getY();
+        flicker = true;
+        repaint();
+      }
+    });
+
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    }); 
+  }
+
+  public void paint(Graphics g) {
+    Graphics screengc = null;
+
+    if (!flicker) {
+      screengc = g;
+      g = buffer.getGraphics();
+    }
+
+    g.setColor(Color.blue);
+    g.fillRect(0, 0, w, h);
+    
+    g.setColor(Color.red); 
+    for (int i=0; i<w; i+=gap)
+      g.drawLine(i, 0, w-i, h);
+    for (int i=0; i<h; i+=gap)
+      g.drawLine(0, i, w, h-i);
+    
+    g.setColor(Color.black);
+    g.drawString("Press mouse button to double buffer", 10, h/2);
+
+    g.setColor(Color.yellow);
+    g.fillOval(mx - gap, my - gap, gap*2+1, gap*2+1);
+
+    if (!flicker) {
+      screengc.drawImage(buffer, 0, 0, null);
+    }
+  }
+
+  public void update(Graphics g) {
+    paint(g);
+  }
+
+  public static void main(String[] args) {
+    DoubleBuffer appwin = new DoubleBuffer();
+
+    appwin.setSize(new Dimension(400, 400));
+    appwin.setTitle("DoubleBuffer");
+    appwin.setVisible(true);
+
+    // Create an off-screen buffer.
+    appwin.buffer = appwin.createImage(appwin.w, appwin.h);
+  } 
+}
+
+listing 3
+// Create an image in memory.
+import java.awt.*;
+import java.awt.image.*;
+import java.awt.event.*;
+
+public class MemoryImageGenerator extends Frame {
+  Image img;
+  int w = 512;
+  int h = 512;
+
+  public MemoryImageGenerator() {
+    int[] pixels = new int[w * h];
+    int i = 0;
+
+    for(int y=0; y<h; y++) {
+      for(int x=0; x<w; x++) {
+        int r = (x^y)&0xff;
+        int g = (x*2^y*2)&0xff;
+        int b = (x*4^y*4)&0xff;
+        pixels[i++] = (255 << 24) | (r << 16) | (g << 8) | b;
+      }
+    }
+    img = createImage(new MemoryImageSource(w, h, pixels, 0, w));
+
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+  }
+
+  public void paint(Graphics g) {
+    g.drawImage(img, getInsets().left, getInsets().top, null);
+  }
+
+  public static void main(String[] args) {
+    MemoryImageGenerator appwin = new MemoryImageGenerator();
+
+    appwin.setSize(new Dimension(400, 400));
+    appwin.setTitle("MemoryImageGenerator");
+    appwin.setVisible(true);
+  } 
+}
+
+listing 4
+// Demonstrate PixelGraber.
+import java.awt.* ;
+import java.awt.event.*;
+import java.awt.image.* ;
+import javax.imageio.*;
+import java.io.*;
+
+public class HistoGrab extends Frame {
+  Dimension d;
+  Image img;
+  int iw, ih;
+  int[] pixels;
+  int[] hist = new int[256];
+  int max_hist = 0;
+  Insets ins;
+
+  public HistoGrab() {
+
+    try {
+      File imageFile = new File("Lilies.jpg");
+
+      // Load the image.
+      img = ImageIO.read(imageFile);
+
+      iw = img.getWidth(null);
+      ih = img.getHeight(null);
+      pixels = new int[iw * ih];
+      PixelGrabber pg = new PixelGrabber(img, 0, 0, iw, ih,
+                                         pixels, 0, iw);
+      pg.grabPixels();
+    } catch (InterruptedException e) {
+      System.out.println("Interrupted");
+      return;
+    } catch (IOException exc) {
+      System.out.println("Cannot load image file.");
+      System.exit(0);
+    }
+
+    for (int i=0; i<iw*ih; i++) {
+      int p = pixels[i];
+      int r = 0xff & (p >> 16);
+      int g = 0xff & (p >> 8);
+      int b = 0xff & (p);
+      int y = (int) (.33 * r + .56 * g + .11 * b);
+      hist[y]++;
+    }
+    for (int i=0; i<256; i++) {
+      if (hist[i] > max_hist)
+        max_hist = hist[i];
+    }
+
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+  }
+
+  public void paint(Graphics g) {
+    // Get the border/header insets.
+    ins = getInsets();
+
+    g.drawImage(img, ins.left, ins.top, null);
+
+    int x = (iw - 256) / 2;
+    int lasty = ih - ih * hist[0] / max_hist;
+
+    for (int i=0; i<256; i++, x++) {
+      int y = ih - ih * hist[i] / max_hist;
+      g.setColor(new Color(i, i, i));
+      g.fillRect(x+ins.left, y+ins.top, 1, ih-y);
+      g.setColor(Color.red);
+      g.drawLine((x-1)+ins.left,lasty+ins.top,x+ins.left,y+ins.top);
+      lasty = y;
+    }
+  }
+
+  public static void main(String[] args) {
+    HistoGrab appwin = new HistoGrab();
+
+    appwin.setSize(new Dimension(400, 380));
+    appwin.setTitle("HistoGrab");
+    appwin.setVisible(true);
+  } 
+}
+
+listing 5
+// Demonstrate CropImageFilter.
+import java.awt.*;
+import java.awt.image.*;
+import java.awt.event.*;
+import javax.imageio.*;
+import java.io.*;
+
+public class TileImage extends Frame {
+  Image img;
+  Image[] cell = new Image[4*4];
+  int iw, ih;
+  int tw, th;
+
+  public TileImage() {
+    try {
+      File imageFile = new File("Lilies.jpg");
+
+      // Load the image.
+      img = ImageIO.read(imageFile);
+
+      iw = img.getWidth(null);
+      ih = img.getHeight(null);
+      tw = iw / 4;
+      th = ih / 4;
+
+      CropImageFilter f;
+      FilteredImageSource fis;
+
+      for (int y=0; y<4; y++) {
+        for (int x=0; x<4; x++) {
+          f = new CropImageFilter(tw*x, th*y, tw, th);
+          fis = new FilteredImageSource(img.getSource(), f);
+          int i = y*4+x;
+          cell[i] = createImage(fis);
+        }
+      }
+
+      for (int i=0; i<32; i++) {
+        int si = (int)(Math.random() * 16);
+        int di = (int)(Math.random() * 16);
+        Image tmp = cell[si];
+        cell[si] = cell[di];
+        cell[di] = tmp;
+      }
+    } catch (IOException exc) {
+      System.out.println("Cannot load image file.");
+      System.exit(0);
+    }
+
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+  }
+
+  public void paint(Graphics g) {
+    for (int y=0; y<4; y++) {
+      for (int x=0; x<4; x++) {
+        g.drawImage(cell[y*4+x], x * tw + getInsets().left,
+                    y * th + getInsets().top, null);
+      }
+    }
+  }
+
+  public static void main(String[] args) {
+    TileImage appwin = new TileImage();
+
+    appwin.setSize(new Dimension(420, 420));
+    appwin.setTitle("TileImage");
+    appwin.setVisible(true);
+  } 
+}
+
+listing 6
+// Demonstrate image filters.
+import java.awt.*;
+import java.awt.event.*;
+import javax.imageio.*;
+import java.io.*;
+import java.lang.reflect.*;
+
+public class ImageFilterDemo extends Frame implements ActionListener {
+  Image img;
+  PlugInFilter pif;
+  Image fimg;
+  Image curImg;
+  LoadedImage lim;
+  Label lab;
+  Button reset;
+
+  // Names of the filters.
+  String[] filters = { "Grayscale", "Invert", "Contrast",
+                       "Blur", "Sharpen" };
+
+  public ImageFilterDemo() {
+    Panel p = new Panel();
+    add(p, BorderLayout.SOUTH);
+
+    // Create Reset button.
+    reset = new Button("Reset");
+    reset.addActionListener(this);
+    p.add(reset);
+
+    // Add the filter buttons.
+    for(String fstr: filters) {
+      Button b = new Button(fstr);
+      b.addActionListener(this);
+      p.add(b);
+    }
+
+    // Create the top label.    
+    lab = new Label("");
+    add(lab, BorderLayout.NORTH);
+
+    // Load the image.
+    try {
+      File imageFile = new File("Lilies.jpg");
+
+      // Load the image.
+      img = ImageIO.read(imageFile); 
+    } catch (IOException exc) {
+      System.out.println("Cannot load image file.");
+      System.exit(0);
+    }
+
+    // Get a LoadedImage and add it to the center.      
+    lim = new LoadedImage(img);
+    add(lim, BorderLayout.CENTER);   
+
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+  }
+
+  public void actionPerformed(ActionEvent ae) {
+    String a = "";
+
+    try {
+      a = ae.getActionCommand();
+      if (a.equals("Reset")) {
+        lim.set(img);
+        lab.setText("Normal");
+      }
+      else {
+        // Get the selected filter.
+        pif = (PlugInFilter)
+                (Class.forName(a)).getConstructor().newInstance();
+        fimg = pif.filter(this, img);
+        lim.set(fimg);
+        lab.setText("Filtered: " + a);
+      }
+      repaint();
+    } catch (ClassNotFoundException e) {
+      lab.setText(a + " not found");
+      lim.set(img);
+      repaint();
+    } catch (InstantiationException e) {
+      lab.setText("could't new " + a);
+    } catch (IllegalAccessException e) {
+      lab.setText("no access: " + a);
+    } catch (NoSuchMethodException | InvocationTargetException e) {
+      lab.setText("Filter creation error: " + e);
+    } 
+  } 
+
+  public static void main(String[] args) {
+    ImageFilterDemo appwin = new ImageFilterDemo();
+
+    appwin.setSize(new Dimension(420, 420));
+    appwin.setTitle("ImageFilterDemo");
+    appwin.setVisible(true);
+  } 
+}
+
+listing 7
+interface PlugInFilter {
+  java.awt.Image filter(java.awt.Frame f, java.awt.Image in);
+}
+
+listing 8
+import java.awt.*;
+
+public class LoadedImage extends Canvas {
+  Image img;
+
+  public LoadedImage(Image i) {
+    set(i);
+  }
+
+  void set(Image i) {
+    img = i;
+    repaint();
+  }
+  
+  public void paint(Graphics g) {
+    if (img == null) {
+      g.drawString("no image", 10, 30);
+    } else {
+      g.drawImage(img, 0, 0, this);
+    } 
+  }
+
+  public Dimension getPreferredSize()  {
+    return new Dimension(img.getWidth(this), img.getHeight(this));
+  }
+  
+  public Dimension getMinimumSize()  {
+    return getPreferredSize();
+  }
+}
+
+listing 9
+// Grayscale filter.
+import java.awt.*;
+import java.awt.image.*;
+
+class Grayscale extends RGBImageFilter implements PlugInFilter {
+  public Grayscale() {}
+
+  public Image filter(Frame f, Image in) {
+    return f.createImage(new FilteredImageSource(in.getSource(), this));
+  }
+
+  public int filterRGB(int x, int y, int rgb) {
+    int r = (rgb >> 16) & 0xff;
+    int g = (rgb >> 8) & 0xff;
+    int b = rgb & 0xff;
+    int k = (int) (.56 * g + .33 * r + .11 * b);
+    return (0xff000000 | k << 16 | k << 8 | k);
+  }
+}
+
+listing 10
+// Invert colors filter.
+import java.awt.*;
+import java.awt.image.*;
+
+class Invert extends RGBImageFilter implements PlugInFilter {
+  public Invert() { }
+
+  public Image filter(Frame f, Image in) {
+    return f.createImage(new FilteredImageSource(in.getSource(), this));
+  }
+
+  public int filterRGB(int x, int y, int rgb) {
+    int r = 0xff - (rgb >> 16) & 0xff;
+    int g = 0xff - (rgb >> 8) & 0xff;
+    int b = 0xff - rgb & 0xff;
+    return (0xff000000 | r << 16 | g << 8 | b);
+  }
+}
+
+listing 11
+// Contrast filter.
+import java.awt.*;
+import java.awt.image.*;
+
+public class Contrast extends RGBImageFilter implements PlugInFilter {
+
+  public Image filter(Frame f, Image in) {
+    return f.createImage(new FilteredImageSource(in.getSource(), this));
+  }
+
+  private int multclamp(int in, double factor) {
+    in = (int) (in * factor);
+    return in > 255 ? 255 : in;
+  }
+
+  double gain = 1.2;
+  private int cont(int in) {
+    return (in < 128) ? (int)(in/gain) : multclamp(in, gain);
+  }
+
+  public int filterRGB(int x, int y, int rgb) {
+    int r = cont((rgb >> 16) & 0xff);
+    int g = cont((rgb >> 8) & 0xff);
+    int b = cont(rgb & 0xff);
+    return (0xff000000 | r << 16 | g << 8 | b);
+  }
+}
+
+listing 12
+// Convolution filter.
+import java.awt.*;
+import java.awt.image.*;
+
+abstract class Convolver implements ImageConsumer, PlugInFilter {
+  int width, height;
+  int[] imgpixels, newimgpixels;
+  boolean imageReady = false;
+
+  abstract void convolve();  // filter goes here...
+  
+  public Image filter(Frame f, Image in) {
+    imageReady = false;
+    in.getSource().startProduction(this);
+    waitForImage();
+    newimgpixels = new int[width*height];
+
+    try {
+      convolve();
+    } catch (Exception e) {
+      System.out.println("Convolver failed: " + e);
+      e.printStackTrace();
+    }
+
+    return f.createImage(
+      new MemoryImageSource(width, height, newimgpixels, 0, width));
+  }
+
+  synchronized void waitForImage() {
+    try { 
+      while(!imageReady)
+        wait();
+    } catch (Exception e) {
+      System.out.println("Interrupted");
+    }
+  }
+
+  public void setProperties(java.util.Hashtable<?,?> dummy) { }
+  public void setColorModel(ColorModel dummy) { }
+  public void setHints(int dummy) { }
+
+  public synchronized void imageComplete(int dummy) {
+    imageReady = true;
+    notifyAll();
+  }
+
+  public void setDimensions(int x, int y) {
+    width = x;
+    height = y;
+    imgpixels = new int[x*y];
+  }
+
+  public void setPixels(int x1, int y1, int w, int h, 
+    ColorModel model, byte[] pixels, int off, int scansize) {
+    int pix, x, y, x2, y2, sx, sy;
+
+    x2 = x1+w;
+    y2 = y1+h;
+    sy = off;
+    for(y=y1; y<y2; y++) {
+      sx = sy;
+      for(x=x1; x<x2; x++) {
+        pix = model.getRGB(pixels[sx++]);
+        if((pix & 0xff000000) == 0)
+            pix = 0x00ffffff;
+        imgpixels[y*width+x] = pix;
+      }
+      sy += scansize;
+    }
+  }
+
+  public void setPixels(int x1, int y1, int w, int h, 
+    ColorModel model, int[] pixels, int off, int scansize) {
+    int pix, x, y, x2, y2, sx, sy;
+
+    x2 = x1+w;
+    y2 = y1+h;
+    sy = off;
+    for(y=y1; y<y2; y++) {
+      sx = sy;
+      for(x=x1; x<x2; x++) {
+        pix = model.getRGB(pixels[sx++]);
+        if((pix & 0xff000000) == 0)
+            pix = 0x00ffffff;
+        imgpixels[y*width+x] = pix;
+      }
+      sy += scansize;
+    }
+  }
+}
+
+listing 13
+public class Blur extends Convolver {
+  public void convolve() {
+    for(int y=1; y<height-1; y++) {
+      for(int x=1; x<width-1; x++) {
+        int rs = 0;
+        int gs = 0;
+        int bs = 0;
+
+        for(int k=-1; k<=1; k++) {
+          for(int j=-1; j<=1; j++) {
+            int rgb = imgpixels[(y+k)*width+x+j];
+            int r = (rgb >> 16) & 0xff;
+            int g = (rgb >> 8) & 0xff;
+            int b = rgb & 0xff;
+            rs += r;
+            gs += g;
+            bs += b;
+          }
+        }
+
+        rs /= 9;
+        gs /= 9;
+        bs /= 9;
+
+       newimgpixels[y*width+x] = (0xff000000 |
+                                 rs << 16 | gs << 8 | bs);
+      }
+    }
+  }
+}
+
+listing 14
+public class Sharpen extends Convolver {
+
+  private final int clamp(int c) {
+    return (c > 255 ? 255 : (c < 0 ? 0 : c));
+  }
+
+  public void convolve() {
+    int r0=0, g0=0, b0=0;
+    for(int y=1; y<height-1; y++) {
+      for(int x=1; x<width-1; x++) {
+        int rs = 0;
+        int gs = 0;
+        int bs = 0;
+
+        for(int k=-1; k<=1; k++) {
+          for(int j=-1; j<=1; j++) {
+            int rgb = imgpixels[(y+k)*width+x+j];
+            int r = (rgb >> 16) & 0xff;
+            int g = (rgb >> 8) & 0xff;
+            int b = rgb & 0xff;
+            if (j == 0 && k == 0) {
+              r0 = r;
+              g0 = g;
+              b0 = b;
+            } else {
+              rs += r;
+              gs += g;
+              bs += b;
+            }
+          }
+        }
+
+        rs >>= 3;
+        gs >>= 3;
+        bs >>= 3;
+        newimgpixels[y*width+x] = (0xff000000 |
+                                clamp(r0+r0-rs) << 16 |
+                                clamp(g0+g0-gs) << 8 |
+                                clamp(b0+b0-bs));
+      }
+    }
+  }
+}

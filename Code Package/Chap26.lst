@@ -1,0 +1,436 @@
+listing 1
+// Draw graphics elements.
+import java.awt.event.*;
+import java.awt.*;
+
+public class GraphicsDemo extends Frame {
+
+  public GraphicsDemo() {
+    // Anonymous inner class to handle window close events.
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+  }
+
+  public void paint(Graphics g) {
+
+    // Draw lines.
+    g.drawLine(20, 40, 100, 90);
+    g.drawLine(20, 90, 100, 40);
+    g.drawLine(40, 45, 250, 80);
+
+    // Draw rectangles.
+    g.drawRect(20, 150, 60, 50);
+    g.fillRect(110, 150, 60, 50);
+    g.drawRoundRect(200, 150, 60, 50, 15, 15);
+    g.fillRoundRect(290, 150, 60, 50, 30, 40);
+
+    // Draw Elipses and Circles
+    g.drawOval(20, 250, 50, 50);
+    g.fillOval(100, 250, 75, 50);
+    g.drawOval(200, 260, 100, 40);
+
+    // Draw Arcs
+    g.drawArc(20, 350, 70, 70, 0, 180);
+    g.fillArc(70, 350, 70, 70, 0, 75);
+
+    // Draw a polygon
+    int[] xpoints = {20, 200, 20, 200, 20};
+    int[] ypoints = {450, 450, 650, 650, 450};
+    int num = 5;
+
+    g.drawPolygon(xpoints, ypoints, num);
+  }
+
+  public static void main(String[] args) {
+    GraphicsDemo appwin = new GraphicsDemo();
+
+    appwin.setSize(new Dimension(370, 700));
+    appwin.setTitle("GraphicsDemo");
+    appwin.setVisible(true);
+  } 
+}
+
+listing 2
+// Resizing output to fit the current size of a window.
+import java.awt.*;
+import java.awt.event.*;
+ 
+public class ResizeMe extends Frame {
+  final int inc = 25;
+  int max = 500;
+  int min = 200;
+  Dimension d;
+
+  public ResizeMe() {
+    // Anonymous inner class to handle mouse release events.
+    addMouseListener(new MouseAdapter() {
+      public void mouseReleased(MouseEvent me) {
+        int w = (d.width + inc) > max?min :(d.width + inc);
+        int h = (d.height + inc) > max?min :(d.height + inc);
+        setSize(new Dimension(w, h));
+      }
+    });
+
+    // Anonymous inner class to handle window close events.
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+  }
+
+  public void paint(Graphics g) {
+    Insets i = getInsets();
+    d = getSize();
+
+    g.drawLine(i.left, i.top, d.width-i.right, d.height-i.bottom);
+    g.drawLine(i.left, d.height-i.bottom, d.width-i.right, i.top);
+  }
+
+  public static void main(String[] args) {
+    ResizeMe appwin = new ResizeMe();
+
+    appwin.setSize(new Dimension(200, 200));
+    appwin.setTitle("ResizeMe");
+    appwin.setVisible(true);
+  }
+}
+
+
+listing 3
+// Demonstrate color.
+import java.awt.*;
+import java.awt.event.*;
+
+public class ColorDemo extends Frame {
+
+  public ColorDemo() {
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+  }
+
+  // Draw in different colors.
+  public void paint(Graphics g) {
+    Color c1 = new Color(255, 100, 100);
+    Color c2 = new Color(100, 255, 100);
+    Color c3 = new Color(100, 100, 255);
+
+    g.setColor(c1);
+    g.drawLine(20, 40, 100, 100);
+    g.drawLine(20, 100, 100, 20);
+
+    g.setColor(c2);
+    g.drawLine(40, 45, 250, 180);
+    g.drawLine(75, 90, 400, 400);
+
+    g.setColor(c3);
+    g.drawLine(20, 150, 400, 40);
+    g.drawLine(25, 290, 80, 19);
+
+    g.setColor(Color.red);
+    g.drawOval(20, 40, 50, 50);
+    g.fillOval(70, 90, 140, 100);
+
+    g.setColor(Color.blue);
+    g.drawOval(190, 40, 90, 60);
+    g.drawRect(40, 40, 55, 50);
+
+    g.setColor(Color.cyan);
+    g.fillRect(100, 40, 60, 70);
+    g.drawRoundRect(190, 40, 60, 60, 15, 15);
+  }
+
+  public static void main(String[] args) {
+    ColorDemo appwin = new ColorDemo();
+
+    appwin.setSize(new Dimension(340, 260));
+    appwin.setTitle("ColorDemo");
+    appwin.setVisible(true);
+  }
+}
+
+
+listing 4
+// Demonstrate XOR mode.
+import java.awt.*;
+import java.awt.event.*;
+
+public class XOR extends Frame {
+  int chsX=100, chsY=100;
+
+  public XOR() {
+    addMouseMotionListener(new MouseMotionAdapter() {
+      public void mouseMoved(MouseEvent me) {
+        int x = me.getX();
+        int y = me.getY();
+        chsX = x-10;
+        chsY = y-10;
+        repaint();
+      }
+    });
+
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+  }
+   
+  // Demonstrate XOR mode.
+  public void paint(Graphics g) {
+    g.setColor(Color.green);
+    g.fillRect(20, 40, 60, 70);
+
+    g.setColor(Color.blue);
+    g.fillRect(110, 40, 60, 70);
+
+    g.setColor(Color.black);
+    g.fillRect(200, 40, 60, 70);
+
+    g.setColor(Color.red);
+    g.fillRect(60, 120, 160, 110);
+
+    // XOR cross hairs
+    g.setXORMode(Color.black);
+    g.drawLine(chsX-10, chsY, chsX+10, chsY);
+    g.drawLine(chsX, chsY-10, chsX, chsY+10);
+    g.setPaintMode();  
+  }    
+
+  public static void main(String[] args) {
+    XOR appwin = new XOR();
+
+    appwin.setSize(new Dimension(300, 260));
+    appwin.setTitle("XOR Demo");
+    appwin.setVisible(true);
+  }
+}
+
+listing 5
+// Display Fonts.
+import java.awt.event.*;
+import java.awt.*;
+
+public class ShowFonts extends Frame {
+  String msg = "First five fonts: ";
+  GraphicsEnvironment ge;
+
+  public ShowFonts() {
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+
+    // Get the graphics environment.
+    ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+    // Obtain a list of the fonts.
+    String[] fontList = ge.getAvailableFontFamilyNames();
+
+    // Create a string of the first 5 fonts.
+    for(int i=0; (i < 5) && (i < fontList.length); i++)
+      msg += fontList[i] + " ";
+  }
+
+  // Display the fonts.
+  public void paint(Graphics g) {
+    g.drawString(msg, 10, 60);
+  }
+
+  public static void main(String[] args) {
+    ShowFonts appwin = new ShowFonts();
+
+    appwin.setSize(new Dimension(500, 100));
+    appwin.setTitle("ShowFonts");
+    appwin.setVisible(true);
+  }
+}
+
+listing 6
+// Display fonts.
+import java.awt.*;
+import java.awt.event.*;
+ 
+public class SampleFonts extends Frame {
+  int next = 0;
+  Font f;
+  String msg;
+
+  public SampleFonts() {
+    f = new Font("Dialog", Font.PLAIN, 12);
+    msg = "Dialog";
+    setFont(f);
+
+    addMouseListener(new MyMouseAdapter(this));
+
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+  }
+  
+  public void paint(Graphics g) {
+    g.drawString(msg, 10, 60);
+  }
+
+  public static void main(String[] args) {
+    SampleFonts appwin = new SampleFonts();
+
+    appwin.setSize(new Dimension(200, 100));
+    appwin.setTitle("SampleFonts");
+    appwin.setVisible(true);
+  }
+}
+
+class MyMouseAdapter extends MouseAdapter {
+  SampleFonts sampleFonts;
+
+  public MyMouseAdapter(SampleFonts sampleFonts) {
+    this.sampleFonts = sampleFonts;
+  }
+
+  public void mousePressed(MouseEvent me) {
+    // Switch fonts with each mouse click.
+    sampleFonts.next++;
+
+    switch(sampleFonts.next) {
+      case 0:
+        sampleFonts.f = new Font("Dialog", Font.PLAIN, 12);
+        sampleFonts.msg = "Dialog";
+        break;
+      case 1:
+        sampleFonts.f = new Font("DialogInput", Font.PLAIN, 12);
+        sampleFonts.msg = "DialogInput";
+        break;
+      case 2:
+        sampleFonts.f = new Font("SansSerif", Font.PLAIN, 12);
+        sampleFonts.msg = "SansSerif";
+        break;
+      case 3:
+        sampleFonts.f = new Font("Serif", Font.PLAIN, 12);
+        sampleFonts.msg = "Serif";
+        break;
+      case 4:
+        sampleFonts.f = new Font("Monospaced", Font.PLAIN, 12);
+        sampleFonts.msg = "Monospaced";
+        break;
+    }
+
+    if(sampleFonts.next == 4) sampleFonts.next = -1;
+    sampleFonts.setFont(sampleFonts.f);
+    sampleFonts.repaint();
+  }
+}
+
+listing 7
+// Display font info.
+import java.awt.event.*;
+import java.awt.*;
+
+public class FontInfo extends Frame {
+
+  public FontInfo() {
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+  }
+
+  public void paint(Graphics g) {
+    Font f = g.getFont();
+    String fontName = f.getName();
+    String fontFamily = f.getFamily();
+    int fontSize = f.getSize();
+    int fontStyle = f.getStyle();
+
+    String msg = "Family: " + fontName;
+
+    msg += ", Font: " + fontFamily;
+    msg += ", Size: " + fontSize + ", Style: ";
+
+    if((fontStyle & Font.BOLD) == Font.BOLD)
+      msg += "Bold ";
+    if((fontStyle & Font.ITALIC) == Font.ITALIC)
+      msg += "Italic ";
+    if((fontStyle & Font.PLAIN) == Font.PLAIN)
+      msg += "Plain ";
+
+    g.drawString(msg, 10, 60);
+  }
+
+  public static void main(String[] args) {
+    FontInfo appwin = new FontInfo();
+
+    appwin.setSize(new Dimension(300, 100));
+    appwin.setTitle("FontInfo");
+    appwin.setVisible(true);
+  }
+}
+
+listing 8
+// Demonstrate multiline output.
+import java.awt.event.*;
+import java.awt.*;
+
+public class MultiLine extends Frame {
+  int curX=20, curY=40; // current position
+
+  public MultiLine() {
+    Font f = new Font("SansSerif", Font.PLAIN, 12);
+    setFont(f);
+
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent we) {
+        System.exit(0);
+      }
+    });
+  }
+
+  public void paint(Graphics g) {
+    FontMetrics fm = g.getFontMetrics();
+
+    nextLine("This is on line one.", g);
+    nextLine("This is on line two.", g);
+    sameLine(" This is on same line.", g);
+    sameLine(" This, too.", g);
+    nextLine("This is on line three.", g);
+
+    curX = 20; curY = 40; // reset the coordinates for each repaint
+  }
+
+  // Advance to next line.
+  void nextLine(String s, Graphics g) {
+    FontMetrics fm = g.getFontMetrics();
+
+    curY += fm.getHeight(); // advance to next line
+    curX = 20;
+    g.drawString(s, curX, curY);
+    curX += fm.stringWidth(s); // advance to end of line
+  }
+
+  // Display on same line.
+  void sameLine(String s, Graphics g) {
+    FontMetrics fm = g.getFontMetrics();
+
+    g.drawString(s, curX, curY);
+    curX += fm.stringWidth(s); // advance to end of line
+  }
+
+  public static void main(String[] args) {
+    MultiLine appwin = new MultiLine();
+
+    appwin.setSize(new Dimension(300, 120));
+    appwin.setTitle("MultiLine");
+    appwin.setVisible(true);
+  }
+}
+
