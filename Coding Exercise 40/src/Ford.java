@@ -6,19 +6,19 @@ public class Ford extends Car {
 
      @Override
      public String startEngine() {
-         // return " Ford -> startEngine()";
+         // return "Car Ford -> startEngine()";
          return getClass().getSimpleName() + " -> startEngine()";
      }
 
      @Override
      public String accelerate() {
-         // return "Ford -> accelerate()";
+         // return "Car Ford -> accelerate()";
          return getClass().getSimpleName() + " -> accelerate()";
      }
 
      @Override
      public String brake() {
-         // return "Ford -> brake()";
+         // return "Car Ford -> brake()";
          return getClass().getSimpleName() + " -> brake()";
      }
 }
