@@ -15,6 +15,6 @@ public class Main {
 
         DeluxeBurger db = new DeluxeBurger ();
         db.addHamburgerAddition3 ("Should not do this", 50.53);
-        System.out.println ("Total Deluxe Burger price is " + db.itemizeHamburger ());
+        System.out.format ("Total Deluxe Burger price is %.2f", db.itemizeHamburger ());
     }
 }
