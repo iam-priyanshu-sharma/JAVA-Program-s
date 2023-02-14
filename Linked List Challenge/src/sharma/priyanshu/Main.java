@@ -11,6 +11,44 @@ record Place(String name, int distance) {
     }
 }
 
+//final class Place {
+//    private final String name;
+//    private final int distance;
+//
+//    Place (String name, int distance) {
+//        this.name = name;
+//        this.distance = distance;
+//    }
+//
+//    @Override
+//    public String toString () {
+//        return String.format ("%s (%d)", name, distance);
+//    }
+//
+//    public String name () {
+//        return name;
+//    }
+//
+//    public int distance () {
+//        return distance;
+//    }
+//
+//    @Override
+//    public boolean equals (Object obj) {
+//        if ( obj == this ) return true;
+//        if ( obj == null || obj.getClass () != this.getClass () ) return false;
+//        var that = (Place) obj;
+//        return Objects.equals (this.name, that.name) &&
+//                this.distance == that.distance;
+//    }
+//
+//    @Override
+//    public int hashCode () {
+//        return Objects.hash (name, distance);
+//    }
+//
+//}
+
 public class Main {
 
     public static void main (String[] args) {
