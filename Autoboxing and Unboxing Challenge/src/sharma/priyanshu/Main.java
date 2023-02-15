@@ -25,6 +25,7 @@ public class Main {
         bank.addTransaction ("Priyanshu Sharma", -75.01);
         bank.printStatement ("Priyanshu Sharma");
 
+        bank.addNewCustomer ("Aditya Anand",25);
         bank.addTransaction ("Aditya Anand", 100);
         bank.printStatement ("Aditya Anand");
 
