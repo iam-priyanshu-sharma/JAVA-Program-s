@@ -42,7 +42,7 @@ public class Main {
 
     public static void printList (List<Theatre.Seat> list) {
         for (Theatre.Seat seat : list) {
-            System.out.print (" " + seat.getSeatNumber () + " $" + seat.getPrice ());
+            System.out.print (" " + seat.getSeatNumber () + " ₹" + seat.getPrice ());
         }
         System.out.println ();
         System.out.println ("=".repeat (152));
