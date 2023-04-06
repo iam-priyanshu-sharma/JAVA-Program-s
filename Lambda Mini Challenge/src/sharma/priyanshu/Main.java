@@ -10,14 +10,10 @@ public class Main {
 
     public static void main (String[] args) {
 
-        Consumer<String> printWords = new Consumer<String> () {
-
-            @Override
-            public void accept (String sentence) {
-                String[] parts = sentence.split (" ");
-                for (String part : parts) {
-                    System.out.println (part);
-                }
+        Consumer<String> printWords = sentence -> {
+            String[] parts = sentence.split (" ");
+            for (String part : parts) {
+                System.out.println (part);
             }
         };
 
@@ -38,9 +34,7 @@ public class Main {
 
         printWordsForEach.accept ("Let's split this up into an array");
 
-        Consumer<String> printWordsConcise = sentence -> {
-            Arrays.asList (sentence.split (" ")).forEach (s -> System.out.println (s));
-        };
+        Consumer<String> printWordsConcise = sentence -> Arrays.asList (sentence.split (" ")).forEach (s -> System.out.println (s));
 
         printWordsConcise.accept ("Let's split this up into an array");
 
@@ -60,9 +54,7 @@ public class Main {
         System.out.println (result);
 
         Supplier<String> iLoveJava = () -> "I love Java!";
-        Supplier<String> iLoveJava2 = () -> {
-            return "I love Java!";
-        };
+        Supplier<String> iLoveJava2 = () -> "I love Java!";
 
         System.out.println (iLoveJava.get ());
         System.out.println (iLoveJava2.get ());
