@@ -71,8 +71,7 @@ public class Main {
         return returnVal.toString ();
     }
 
-    public static String everySecondCharacter (Function<String, String> func,
-                                               String source) {
+    public static String everySecondCharacter (Function<String, String> func, String source) {
         return func.apply (source);
     }
 }
