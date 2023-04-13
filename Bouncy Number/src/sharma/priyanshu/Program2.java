@@ -9,7 +9,7 @@ public class Program2 {
         Scanner scanner = new Scanner (System.in);
         System.out.print ("Enter a number: ");
         n = scanner.nextInt ();
-        
+
         if ( n < 100 ) {
             System.out.println (n + " is not a Bouncy Number.");
             return;
