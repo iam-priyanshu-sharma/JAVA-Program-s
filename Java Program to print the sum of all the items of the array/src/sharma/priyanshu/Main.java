@@ -9,7 +9,7 @@ public class Main {
         for (int j : arr) {
             sum = sum + j;
         }
-        
+
         System.out.println ("Sum of all the elements of an array: " + sum);
     }
 }
