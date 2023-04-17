@@ -10,7 +10,7 @@ public class Main {
             if ( j < min )
                 min = j;
         }
-        
+
         System.out.println ("Smallest element present in given array: " + min);
     }
 }
