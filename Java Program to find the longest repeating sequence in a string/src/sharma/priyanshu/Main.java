@@ -11,7 +11,7 @@ public class Main {
 
             for (int j = i + 1; j < n; j++) {
                 String x = lcp (str.substring (i, n), str.substring (j, n));
-                
+
                 if ( x.length () > lrs.length () ) {
                     lrs = x;
                 }
