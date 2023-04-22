@@ -2,40 +2,39 @@ package sharma.priyanshu;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
 
     public static void main (String[] args) throws Exception {
-        String line, word = "";
-        int count, maxCount = 0;
-        ArrayList<String> words = new ArrayList<> ();
-        FileReader file = new FileReader ("data.txt ");
+        String line;
+        Map<String, Integer> wordCounts = new HashMap<> ();
+        FileReader file = new FileReader ("E:\\BCA\\Program's\\Java Program's\\Java Program to find the most repeated" + " word in a text file\\src\\sharma\\priyanshu\\resource\\data.txt");
         BufferedReader br = new BufferedReader (file);
 
         while ((line = br.readLine ()) != null) {
-            String[] string = line.toLowerCase ().split ("([,.\\s]+) ");
-            words.addAll (Arrays.asList (string));
-        }
+            String[] words = line.toLowerCase ().split ("[,.\\s]+");
 
-        for (int i = 0; i < words.size (); i++) {
-            count = 1;
-
-            for (int j = i + 1; j < words.size (); j++) {
-
-                if ( words.get (i).equals (words.get (j)) ) {
-                    count++;
+            for (String word : words) {
+                if ( wordCounts.containsKey (word) ) {
+                    wordCounts.put (word, wordCounts.get (word) + 1);
+                } else {
+                    wordCounts.put (word, 1);
                 }
             }
+        }
 
-            if ( count > maxCount ) {
-                maxCount = count;
-                word = words.get (i);
+        String mostRepeatedWord = null;
+        int maxCount = 0;
+        for (Map.Entry<String, Integer> entry : wordCounts.entrySet ()) {
+            if ( entry.getValue () > maxCount ) {
+                maxCount = entry.getValue ();
+                mostRepeatedWord = entry.getKey ();
             }
         }
 
-        System.out.println ("Most repeated word: " + word);
+        System.out.println ("Most repeated word: " + mostRepeatedWord);
         br.close ();
     }
 }
