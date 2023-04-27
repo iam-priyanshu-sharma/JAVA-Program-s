@@ -46,7 +46,7 @@ public class Main {
 
         return false;
     }
-    
+
     public static class Node {
         int data;
         Node left;
